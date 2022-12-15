@@ -26,7 +26,18 @@
 
 // greeting('Ciao')('Marco');
 
+// const addTax = (rate, value) => value + value * rate;
 
+// const addVAT = addTax.bind(null, 0.23);
+
+// function faddTax(rate) {
+//   return function (value) {
+//     return value + value * rate;
+//   };
+// }
+
+// const faddVAT = faddTax(0.23);
+// faddVAT(100);
 
 // Coding Challenge #1
 
@@ -61,50 +72,56 @@ BONUS TEST DATA 2: [1, 5, 3, 9, 6, 1]
 GOOD LUCK 😀
 */
 const poll = {
-    question: 'What is your favourite programming language?',
-    options: ['0: JavaScript', '1: Python', '2: Rust', '3: C++'],
-    // This generates [0, 0, 0, 0]. More in the next section 😃
-    answers: new Array(4).fill(0),
-    registerNewAnswer() {
-        // il metodo mostra un prompt per far rispondere l'utente
-        const [javascript, phyton, rust, cPlusPlus] = poll.options;
-        const newQuestion = `${poll.question}\n${javascript}\n${phyton}\n${rust}\n${cPlusPlus}\n(Write option number)`;
-        const answer = Number(prompt(newQuestion));
-        if (answer >= 0 && answer <= 3) {
-            // se la risposta dell'utente è  valida viene inserita nell'array delle risposte
-            alert(`${answer} is your choise`);
-            poll.answers[answer]++;
-            // console.log(this);
-            console.log(this.displayResults(this.answers));
-            return this.displayResults(this.answers);
-        } else {
-            alert('Your answer must be a number from 0 to 3... Retry');
-        }
-    },
+  question: 'What is your favourite programming language?',
+  options: ['0: JavaScript', '1: Python', '2: Rust', '3: C++'],
+  // This generates [0, 0, 0, 0]. More in the next section 😃
+  answers: new Array(4).fill(0),
+  registerNewAnswer() {
+    // il metodo mostra un prompt per far rispondere l'utente
+    const [javascript, phyton, rust, cPlusPlus] = poll.options;
+    const newQuestion = `${this.question}\n${javascript}\n${phyton}\n${rust}\n${cPlusPlus}\n(Write option number)`;
+    const answer = Number(prompt(newQuestion));
+    if (answer >= 0 && answer <= 3) {
+      // se la risposta dell'utente è  valida viene inserita nell'array delle risposte
+      alert(`${answer} is your choise`);
+      poll.answers[answer]++;
+      // console.log(this);
+      //   console.log(this.displayResults(this.answers));
+      //   return this.displayResults(this.answers);
+      this.displayResults();
+      this.displayResults('string');
+    } else {
+      alert('Your answer must be a number from 0 to 3... Retry');
+    }
+  },
 
-    displayResults(type) {
-        if (typeof (type) == 'String') {
-            const [jav, pyt, rus, cplus] = poll.answers;
-            return console.log(`Poll results are ${jav}, ${pyt}, ${rus}. ${cplus}`);
-        } else {
-            return console.log(type);
-        }
-    },
+  displayResults(type = 'array') {
+    if (type === 'array') {
+      console.log(this.answers);
+    } else if (type == 'string') {
+      //   const [jav, pyt, rus, cplus] = poll.answers;
+      return console.log(`Poll results are ${this.answers.join(', ')}`);
+    } else {
+      return console.log(type);
+    }
+  },
 };
 
-document.querySelector('.poll').addEventListener('click', function () {
-    poll.registerNewAnswer();
-});
+document
+  .querySelector('.poll')
+  .addEventListener('click', poll.registerNewAnswer.bind(poll));
 
 // poll.registerNewAnswer
 
 // poll.displayResults([5, 2, 3]);
 
-
 (function () {
-    const header = document.querySelector('h1');
-    header.style.color = 'red';
-    document.querySelector('body').addEventListener('click', function () {
-        header.style.color = 'blue';
-    });
+  const header = document.querySelector('h1');
+  header.style.color = 'red';
+  document.querySelector('body').addEventListener('click', function () {
+    header.style.color = 'blue';
+  });
 })();
+
+poll.displayResults.call({ answers: [5, 2, 3] }, 'string');
+poll.displayResults.call({ answers: [1, 5, 3, 9, 6, 1] }, 'string');
