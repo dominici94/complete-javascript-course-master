@@ -71,7 +71,76 @@ console.log(bmw);
 console.log(mercedes);
 
 bmw.accelerate();
-debugger;
+// debugger;
 bmw.accelerate();
-debugger;
+// debugger;
 mercedes.brake();
+
+// class expression
+// const PersonCl = class {};
+
+// class declaration
+class PersonCl {
+  constructor(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  }
+
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  }
+}
+
+const jessica = new PersonCl('Jessica', 1996);
+console.log(jessica);
+
+// Coding Challenge #2
+// Your tasks:
+// 1. Re-create Challenge #1, but this time using an ES6 class (call it 'CarCl')
+// 2. Add a getter called 'speedUS' which returns the current speed in mi/h (divide
+// by 1.6)
+// 3. Add a setter called 'speedUS' which sets the current speed in mi/h (but
+// converts it to km/h before storing the value, by multiplying the input by 1.6)
+// 4. Create a new car and experiment with the 'accelerate' and 'brake'
+// methods, and with the getter and setter.
+// Test data:
+// § Data car 1: 'Ford' going at 120 km/h
+// GOOD LUCK 😀
+
+// 1.
+class CarCl {
+  constructor(make, speed) {
+    this.make = make;
+    this.speed = speed;
+  }
+
+  accelerate() {
+    this.speed += 10;
+    console.log(`${this.make} going at ${this.speed} km/h`);
+  }
+  brake() {
+    this.speed -= 5;
+    console.log(`${this.make} going at ${this.speed} km/h`);
+  }
+
+  // 2.
+  get speedUS() {
+    return this.speed / 1.6;
+  }
+
+  // 3.
+  set speedUS(speed) {
+    this.speed = speed * 1.6;
+  }
+}
+
+const ford = new CarCl('Ford', 120);
+
+ford.accelerate();
+ford.accelerate();
+ford.accelerate();
+ford.brake();
+
+ford.speedUS;
+ford.speedUS = 100;
+console.log(ford);
