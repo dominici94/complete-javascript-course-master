@@ -32,7 +32,8 @@ const jonas = new Person('Jonas', 1991);
 const matilda = new Person('Matilda', 2017);
 const jack = new Person('Jack', 1975);
 
-// Coding Challenge #1
+//#region coding challenge #1
+
 // Your tasks:
 // 1. Use a constructor function to implement a 'Car'. A car has a 'make' and a
 // 'speed' property. The 'speed' property is the current speed of the car in
@@ -76,25 +77,70 @@ bmw.accelerate();
 // debugger;
 mercedes.brake();
 
-// class expression
+//#endregion
+
+// CLASS EXPRESSION
 // const PersonCl = class {};
 
-// class declaration
+// CLASS DECLARATION
 class PersonCl {
-  constructor(firstName, birthYear) {
-    this.firstName = firstName;
+  constructor(fullName, birthYear) {
+    this.fullName = fullName;
     this.birthYear = birthYear;
   }
 
+  // Instance methods metodi a cui possono accedere le istanze di tale oggetto
   calcAge() {
     console.log(2037 - this.birthYear);
   }
+
+  get age() {
+    return 2037 - this.birthYear;
+  }
+
+  set fullName(name) {
+    if (name.includes(' ')) this._fullName = name;
+    else alert(`${name} is not a full name!`);
+  }
+
+  get fullName() {
+    return this._fullName;
+  }
+
+  //static method leggibile solo all'interno di PersonCL
+  static hey() {
+    console.log(`Hey there`);
+  }
 }
 
-const jessica = new PersonCl('Jessica', 1996);
+Person.hey = function () {
+  console.log(`Hey there`);
+};
+
+const jessica = new PersonCl('Jessica Davis', 1996);
 console.log(jessica);
 
-// Coding Challenge #2
+const PersonProto = {
+  calcAge() {
+    console.log(2037 - this.birthYear);
+  },
+
+  init(firstName, birthYear) {
+    this.firstName = firstName;
+    this.birthYear = birthYear;
+  },
+};
+
+const steven = Object.create(PersonProto);
+console.log(steven);
+steven.name = 'Steven';
+steven.birthYear = 2002;
+steven.calcAge();
+
+const sarah = Object.create(PersonProto);
+sarah.init('Sarah', 1979);
+
+//#region Coding Challenge #2
 // Your tasks:
 // 1. Re-create Challenge #1, but this time using an ES6 class (call it 'CarCl')
 // 2. Add a getter called 'speedUS' which returns the current speed in mi/h (divide
@@ -144,6 +190,7 @@ ford.brake();
 ford.speedUS;
 ford.speedUS = 100;
 console.log(ford);
+//#endregion
 
 // const Student = function (firstName, birthYear, course) {
 //   // this.firstName = firstName;
@@ -164,9 +211,9 @@ console.log(ford);
 // mike.introduce();
 // mike.calcAge();
 
-// Student.prototype.constructor = Studentì'
+// Student.prototype.constructor = Student;
 
-// using Classes
+// USING CLASSES
 
 class Student extends PersonCl {
   constructor(fullName, birthYear, course) {
@@ -180,7 +227,9 @@ class Student extends PersonCl {
   }
 }
 
-// using Object.create
+const martha = new Student('Marta Jones', 2012, 'Computer Science');
+
+// USING Object.create
 
 const StudentProto = Object.create(PersonProto);
 
@@ -189,10 +238,15 @@ StudentProto.init = function (firstName, birthYear, course) {
   this.course = course;
 };
 
+StudentProto.introduce = function () {
+  console.log(`My name is ${this.firstName} and I study ${this.course}`);
+};
+
 const jay = Object.create(StudentProto);
 jay.init('Jay', 2010, 'Computer Science');
+jay.introduce();
 
-// Coding Challenge #3
+//#region Coding Challenge #3
 // Your tasks:
 // 1. Use a constructor function to implement an Electric Car (called 'EV') as a child
 // "class" of 'Car'. Besides a make and current speed, the 'EV' also has the
@@ -242,3 +296,147 @@ const tesla = new EV('Tesla', 120, 23);
 tesla.accelerate();
 tesla.brake();
 tesla.chargeBattery(90);
+
+//#endregion
+
+// #region Another class example
+class Account {
+  // Public fields presenti nelle istanze e non nel prototipo diversamente dai metodi che sono fuori dal costruttore
+  locale = navigator.language;
+  #movements = [];
+  // dichiarazione private non assegnata di pin perchè verrà assegnata nel costruttore
+  #pin;
+
+  // Private fields
+
+  constructor(owner, currency, pin) {
+    this.owner = owner;
+    this.currency = currency;
+    // convenzione mettere l'underscore per indicare Protected property cioè che non deve essere toccata al di fuori della classe anche se in realtà sarebbe accessibile
+    //Protected property
+    this.#pin = pin;
+    // this._movements = [];
+    // this.locale = navigator.language;
+
+    console.log(`Thanks for opening an account, ${owner}`);
+  }
+
+  getMovements() {
+    return this.#movements;
+  }
+
+  deposit(val) {
+    this.#movements.push(val);
+    // Metodo per concatenare i metodi
+    return this;
+  }
+
+  withdrawal(val) {
+    this.deposit(-val);
+    return this;
+  }
+
+  // protected method
+  _approveLoan(val) {
+    if (val > 0) return true;
+    else return false;
+  }
+
+  requestLoan(val) {
+    if (this._approveLoan(val)) {
+      this.deposit(val);
+      console.log(`Loan approved`);
+    }
+    return this;
+  }
+
+  static helper() {
+    console.log('Helper method');
+  }
+
+  // Private methods not implemented yet in browsers
+  // #approveLoan(val) {
+  //   if (val > 0) return true;
+  //   else return false;
+  // }
+}
+
+const acc1 = new Account('Jonas', 'EUR', 1111);
+console.log(acc1);
+
+// acc1.movements.push(250);
+// acc1.movements.push(-140);
+acc1.deposit(250);
+acc1.withdrawal(140);
+acc1.requestLoan(1000);
+// acc1.#approveLoan(1000);
+console.log(acc1.getMovements());
+// NOT ACCESSIBLE PRIVATE
+// console.log(acc1.#movements);
+// NOT IMPLEMENTED YET IN GOOGLE CHROME PRIVATE METHODS
+// console.log(acc1.#approveLoan(100));
+
+console.log(acc1);
+
+Account.helper();
+
+// Chaining
+acc1
+  .deposit(300)
+  .deposit(500)
+  .withdrawal(35)
+  .requestLoan(25000)
+  .withdrawal(3000);
+
+//#endregion
+
+//#region Coding Challenge #4
+
+// Your tasks:
+// 1. Re-create Challenge #3, but this time using ES6 classes: create an 'EVCl'
+// child class of the 'CarCl' class
+// 2. Make the 'charge' property private
+// 3. Implement the ability to chain the 'accelerate' and 'chargeBattery'
+// methods of this class, and also update the 'brake' method in the 'CarCl'
+// class. Then experiment with chaining!
+// Test data:
+// § Data car 1: 'Rivian' going at 120 km/h, with a charge of 23%
+
+// 1.
+class EVCl extends CarCl {
+  // 2.
+  #charge;
+
+  constructor(make, speed, charge) {
+    super(make, speed);
+    this.#charge = charge;
+  }
+
+  chargeBattery(chargeTo) {
+    this.#charge = chargeTo;
+    return this;
+  }
+
+  accelerate() {
+    this.speed += 20;
+    this.#charge -= 1;
+    console.log(
+      `${this.make} going at ${this.speed} km/h, with a charge of ${
+        this.#charge
+      }%`
+    );
+    return this;
+  }
+
+  brake() {
+    this.speed -= 7;
+    console.log(`you're braking...`);
+    return this;
+  }
+}
+
+const rivian = new EVCl('Rivian', 120);
+
+rivian.accelerate().brake().chargeBattery(87);
+
+//#endregion
