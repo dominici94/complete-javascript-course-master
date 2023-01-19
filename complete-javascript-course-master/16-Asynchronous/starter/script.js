@@ -438,30 +438,40 @@ const whereAmIAsync = async function () {
     if (!resGeo.ok) throw new Error('Problem getting location data');
 
     const dataGeo = await resGeo.json();
-    console.log(dataGeo);
+    // console.log(dataGeo);
 
     // Country data
     const res = await fetch(
       `https://restcountries.com/v3.1/name/${dataGeo.country}`
     );
     if (!res.ok) throw new Error('Problem getting country');
-    console.log(res);
+    // console.log(res);
 
     // Il codice sopra è la stessa cosa che fare quella sotto senza async await
     // fetch(`https://restcountries.com/v3.1/name/${country}`).then(res =>
     //   console.log(res)
     // );
     const data = await res.json();
-    console.log(data);
+    // console.log(data);
     renderCountry(data[0]);
+    return `You are in ${dataGeo.city}, ${dataGeo.country}`;
   } catch (err) {
     console.error(`${err}💥💥💥`);
     renderError(`Something went wrong 💥 ${err.message}`);
+
+    // Reject promise returned from async function
+    throw err;
   }
 };
 
-whereAmIAsync();
-console.log('FIRST');
+console.log('1: Will get location');
+// const city = whereAmIAsync();
+// console.log(city);
+
+// whereAmIAsync()
+//   .then(city => console.log(`2: ${city}`))
+//   .catch(err => console.error(`"2: ${err.message} 💥`))
+//   .finally(() => console.log('3: finish getting location'));
 
 // try {
 //   let y = 1;
@@ -470,3 +480,83 @@ console.log('FIRST');
 // } catch (err) {
 //   alert(err.message);
 // }
+
+(async function () {
+  try {
+    const city = await whereAmIAsync();
+    console.log(`2: ${city}`);
+  } catch (err) {
+    console.error(`"2: ${err.message} 💥`);
+  }
+  console.log('3: finish getting location');
+})();
+
+const get3countries = async function (c1, c2, c3) {
+  try {
+    // const [data1] = await getJSON(`https://restcountries.com/v3.1/name/${c1}`);
+    // const [data2] = await getJSON(`https://restcountries.com/v3.1/name/${c2}`);
+    // const [data3] = await getJSON(`https://restcountries.com/v3.1/name/${c3}`);
+    // console.log([data1.capital, data2.capital, data3.capital]);
+
+    const data = await Promise.all([
+      getJSON(`https://restcountries.com/v3.1/name/${c1}`),
+      getJSON(`https://restcountries.com/v3.1/name/${c2}`),
+      getJSON(`https://restcountries.com/v3.1/name/${c3}`),
+    ]);
+    console.log(data.map(item => item[0].capital));
+  } catch (err) {
+    console.err(err);
+  }
+};
+
+get3countries('portugal', 'canada', 'tanzania');
+
+// Promise.race non importa se una delle promise viene respinta o completata, il risultato sarà comunque la promise più rapida ad arrivare
+(async function () {
+  const res = await Promise.race([
+    getJSON(`https://restcountries.com/v3.1/name/mexico`),
+    getJSON(`https://restcountries.com/v3.1/name/egypt`),
+    getJSON(`https://restcountries.com/v3.1/name/italy`),
+  ]);
+  console.log(res[0]);
+})();
+
+const timeout = function (sec) {
+  return new Promise(function (_, reject) {
+    setTimeout(function () {
+      reject(new Error('Request took too long!'));
+    }, sec * 1000);
+  });
+};
+
+Promise.race([
+  getJSON(`https://restcountries.com/v3.1/name/tanzania`),
+  timeout(5),
+])
+  .then(res => console.log(res[0]))
+  .catch(err => console.error(err));
+
+// Promise.allSettled() anche se viene respinta una promise le torna tutte
+Promise.allSettled([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+]).then(res => console.log(res));
+
+// Promise.all() quando incontra una promise respinta da errore
+Promise.all([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+])
+  .then(res => console.log(res))
+  .catch(err => console.error(err));
+
+// Promise.any()[es2021] torna la prima promise completata con successo. Quindi simile ala race con la differenza che le promise respinte sono direttamente scartate
+Promise.any([
+  Promise.resolve('Success'),
+  Promise.reject('ERROR'),
+  Promise.resolve('Another success'),
+])
+  .then(res => console.log(res))
+  .catch(err => console.error(err));
