@@ -17,22 +17,22 @@ class PaginationView extends View {
 
   _generateMarkupButtonPrev(page) {
     return `
-    <button data-goto="${page}" class="btn--inline pagination__btn--prev">
-    <svg class="search__icon">
-      <use href="${icons}#icon-arrow-left"></use>
-    </svg>
-      <span>Page ${page}</span>
-    </button>
+      <button data-goto="${page}" class="btn--inline pagination__btn--prev">
+      <svg class="search__icon">
+        <use href="${icons}#icon-arrow-left"></use>
+      </svg>
+        <span>Page ${page}</span>
+      </button>
     `;
   }
   _generateMarkupButtonNext(page) {
     return `
-    <button data-goto="${page}" class="btn--inline pagination__btn--next">
-      <span>Page ${page}</span>
-      <svg class="search__icon">
-        <use href="${icons}#icon-arrow-right"></use>
-      </svg>
-    </button>
+      <button data-goto="${page}" class="btn--inline pagination__btn--next">
+        <span>Page ${page}</span>
+        <svg class="search__icon">
+          <use href="${icons}#icon-arrow-right"></use>
+        </svg>
+      </button>
     `;
   }
 

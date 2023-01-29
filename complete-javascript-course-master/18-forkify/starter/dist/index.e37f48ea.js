@@ -590,12 +590,13 @@ const controlRecipes = async function() {
 };
 const controlSearchResults = async function() {
     try {
-        (0, _resultsViewJsDefault.default).renderSpinner();
         // 1) get search query
         const query = (0, _searchViewJsDefault.default).getQuery();
         if (!query) return;
+        (0, _resultsViewJsDefault.default).renderSpinner();
         // 2) load search results
         await _modelJs.loadSearchResults(query);
+        console.log(_modelJs.state.search);
         // 3) render results
         (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage());
         // 4) Render inital pagination buttons
@@ -607,6 +608,7 @@ const controlSearchResults = async function() {
 const controlPagination = function(gotoPage) {
     // 1) render NEW results
     (0, _resultsViewJsDefault.default).render(_modelJs.getSearchResultsPage(gotoPage));
+    console.log(_modelJs.state.search);
     // 2) Render NEW pagination buttons
     (0, _paginationViewJsDefault.default).render(_modelJs.state.search);
 };
@@ -2683,6 +2685,7 @@ const loadSearchResults = async function(query) {
                 image: rec.image_url
             };
         });
+        state.search.page = 1;
     } catch (err) {
         console.error(`${err} 💥💥💥💥💥`);
         throw err;
@@ -3140,22 +3143,22 @@ class PaginationView extends (0, _viewJsDefault.default) {
     }
     _generateMarkupButtonPrev(page) {
         return `
-    <button data-goto="${page}" class="btn--inline pagination__btn--prev">
-    <svg class="search__icon">
-      <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
-    </svg>
-      <span>Page ${page}</span>
-    </button>
+      <button data-goto="${page}" class="btn--inline pagination__btn--prev">
+      <svg class="search__icon">
+        <use href="${0, _iconsSvgDefault.default}#icon-arrow-left"></use>
+      </svg>
+        <span>Page ${page}</span>
+      </button>
     `;
     }
     _generateMarkupButtonNext(page) {
         return `
-    <button data-goto="${page}" class="btn--inline pagination__btn--next">
-      <span>Page ${page}</span>
-      <svg class="search__icon">
-        <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
-      </svg>
-    </button>
+      <button data-goto="${page}" class="btn--inline pagination__btn--next">
+        <span>Page ${page}</span>
+        <svg class="search__icon">
+          <use href="${0, _iconsSvgDefault.default}#icon-arrow-right"></use>
+        </svg>
+      </button>
     `;
     }
     _generateMarkup() {
