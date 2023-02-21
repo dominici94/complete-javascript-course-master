@@ -48,14 +48,10 @@ export const loadRecipe = async function (id) {
 
 export const loadSearchResults = async function (query) {
   try {
-    // debugger;
     state.search.query = query;
-    console.log(query);
 
-    // debugger;
-    // BUG: all'avio c'è un errore nella richiesta AJAX per caricare i risultati della ricerca
     const data = await AJAX(`${API_URL}?search=${query}&key=${KEY}`);
-    // debugger;
+
     console.log(data);
 
     state.search.results = data.data.recipes.map(rec => {
